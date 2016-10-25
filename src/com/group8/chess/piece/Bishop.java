@@ -1,5 +1,5 @@
 package com.group8.chess.piece;
 
-public class Bishop extends Peice {
+public class Bishop extends Piece {
 
 }
