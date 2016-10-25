@@ -1,5 +1,5 @@
 package com.group8.chess.util;
 
-public enum PlayorColor {
+public enum PlayerColor {
 	WHITE,BLACK;
 }
