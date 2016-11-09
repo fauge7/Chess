@@ -3,11 +3,11 @@ package com.group8.chess.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.group8.chess.piece.King;
-import com.group8.chess.piece.Piece;
+import com.group8.chess.piece.*;
 
 public class Board {
-	private Piece position[][];
+	private List<Piece> pieces = new ArrayList<>();
+	private int xSize, ySize;
 	private CheckState checkState;
 	
 	/** 
@@ -16,6 +16,31 @@ public class Board {
 	public Board() {
 		this(8,8);
 		checkState = CheckState.NONE;
+		
+		// Default Board state
+		for (int y = 0; y < 8; y++) {
+			pieces.add(new Pawn(PlayerColor.WHITE, this, new Coordinate(1,y)));
+			pieces.add(new Pawn(PlayerColor.BLACK, this, new Coordinate(7,y)));
+		}
+		
+		pieces.add(new Rook(PlayerColor.WHITE, this, new Coordinate(0,0)));
+		pieces.add(new Knight(PlayerColor.WHITE, this, new Coordinate(1,0)));
+		pieces.add(new Bishop(PlayerColor.WHITE, this, new Coordinate(2,0)));
+		pieces.add(new Queen(PlayerColor.WHITE, this, new Coordinate(3,0)));
+		pieces.add(new King(PlayerColor.WHITE, this, new Coordinate(4,0)));
+		pieces.add(new Bishop(PlayerColor.WHITE, this, new Coordinate(5,0)));
+		pieces.add(new Knight(PlayerColor.WHITE, this, new Coordinate(6,0)));
+		pieces.add(new Rook(PlayerColor.WHITE, this, new Coordinate(7,0)));
+		
+		pieces.add(new Rook(PlayerColor.BLACK, this, new Coordinate(0,7)));
+		pieces.add(new Knight(PlayerColor.BLACK, this, new Coordinate(1,7)));
+		pieces.add(new Bishop(PlayerColor.BLACK, this, new Coordinate(2,7)));
+		pieces.add(new Queen(PlayerColor.BLACK, this, new Coordinate(3,7)));
+		pieces.add(new King(PlayerColor.BLACK, this, new Coordinate(4,7)));
+		pieces.add(new Bishop(PlayerColor.BLACK, this, new Coordinate(5,7)));
+		pieces.add(new Knight(PlayerColor.BLACK, this, new Coordinate(6,7)));
+		pieces.add(new Rook(PlayerColor.BLACK, this, new Coordinate(7,7)));
+		
 	}
 	
 	/**
@@ -24,7 +49,8 @@ public class Board {
 	 * @param height y size.
 	 */
 	public Board(int width, int height) {
-		 position = new Piece[width][height];		
+		 xSize = 8;
+		 ySize = 8;
 	}
 	
 	public CheckState getCheckState() {
@@ -38,18 +64,23 @@ public class Board {
 	 * @return Piece, or null if no piece is there at the specified location. 
 	 */
 	public Piece getPiece(int x, int y) {
-		return getPiece(new Coordinate(x,y));
-		
+		return getPiece(new Coordinate(x,y));	
 	}
 	
 	public Piece getPiece(Coordinate coor) {
 		if (!inBounds(coor)) return null;
-		return position[coor.getX()][coor.getY()];
+		for (Piece piece: pieces) {
+			if (piece.getPos().equals(coor)) return piece;
+		}
+		return null;
 	}
 	
 	public PlayerColor getColor(Coordinate coor) {
-		if (position[coor.getX()][coor.getY()] == null) return PlayerColor.NONE;
-		return position[coor.getX()][coor.getY()].getPlayerColor();
+		if (!inBounds(coor)) return PlayerColor.NONE;
+		for (Piece piece: pieces) {
+			if (piece.getPos().equals(coor)) return piece.getPlayerColor();
+		}
+		return PlayerColor.NONE;
 	}
 	
 	public boolean isOpponentKing(Coordinate coor, PlayerColor color) {
@@ -63,8 +94,8 @@ public class Board {
 	 * @return 
 	 */
 	public boolean inBounds(Coordinate coor) {
-		return (coor.getX() >= 0 && coor.getX() < position.length && 
-				coor.getY() >= 0 && coor.getY() < position[coor.getX()].length);
+		return (coor.getX() >= 0 && coor.getX() < xSize && 
+				coor.getY() >= 0 && coor.getY() < ySize);
 	}
 	
 	/**
@@ -72,6 +103,8 @@ public class Board {
 	 * @param color
 	 */
 	public void buildMoveList(PlayerColor color) {
+
+		// Build threat list to determine moves limits first.
 		Threat threat = new Threat(this);
 		for (Piece piece: getPieces(color.getOpponent())) {
 			piece.getThreats(threat);
@@ -80,14 +113,12 @@ public class Board {
 	}
 	
 	public List<Piece> getPieces(PlayerColor color) {
-		List<Piece> results = new ArrayList<>();
-		for (int x = 0; x < position.length; x++) {
-			for (int y = 0; y < position[x].length; y++) {
-				if (getColor(new Coordinate(x,y)) == color) {
-					results.add(position[x][y]);
-				}
-			}
+		return pieces;
+	}
+
+	public void removePiece(Piece piece) {
+		if (pieces.contains(piece)) {
+			pieces.remove(pieces.indexOf(piece));
 		}
-		return results;
 	}
 }

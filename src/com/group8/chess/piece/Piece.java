@@ -47,6 +47,18 @@ public abstract class Piece {
 		hasMoved = true;
 	}
 	
+	public boolean hasMoved() {
+		return hasMoved;
+	}
+
+	public List<Coordinate> getMoveList() {
+		return moveList;
+	}
+	
+	public void setMoveList(List<Coordinate> moveList) {
+		this.moveList = moveList;
+	}
+
 	public Image getImage() {
 		return image;
 	}
@@ -55,13 +67,6 @@ public abstract class Piece {
 		this.image = image;
 	}
 	
-	public boolean hasMoved() {
-		return hasMoved;
-	}
-
-	public List<Coordinate> getMoveList() {
-		return moveList;
-	}
 	
 	abstract public void getThreats(Threat threat);
 	
