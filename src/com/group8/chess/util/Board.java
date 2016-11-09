@@ -109,11 +109,22 @@ public class Board {
 		for (Piece piece: getPieces(color.getOpponent())) {
 			piece.getThreats(threat);
 		}
-		// TODO
+		
+		List<Piece> colorPieces = getPieces(color);
+		//TODO
+		
 	}
-	
-	public List<Piece> getPieces(PlayerColor color) {
+
+	public List<Piece> getPieces() {
 		return pieces;
+	}
+
+	public List<Piece> getPieces(PlayerColor color) {
+		List<Piece> result = new ArrayList<>();
+		for (Piece piece: pieces) {
+			if (piece.getPlayerColor() == color) result.add(piece);
+		}
+		return result;
 	}
 
 	public void removePiece(Piece piece) {
