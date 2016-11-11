@@ -6,21 +6,21 @@ import java.util.List;
 import com.group8.chess.piece.*;
 
 public class Board {
-	private List<Piece> pieces = new ArrayList<>();
-	private int xSize, ySize;
-	private CheckState checkState;
+	private List<Piece> pieces;
+	public final int width, height;
+	private CheckState checkState = CheckState.NONE;
+	private Threat threat;
 	
 	/** 
 	 * Creates a standard 8x8 board.
 	 */
 	public Board() {
-		this(8,8);
-		checkState = CheckState.NONE;
+		this(8,8, new ArrayList<>());
 		
 		// Default Board state
-		for (int y = 0; y < 8; y++) {
-			pieces.add(new Pawn(PlayerColor.WHITE, this, new Coordinate(1,y)));
-			pieces.add(new Pawn(PlayerColor.BLACK, this, new Coordinate(7,y)));
+		for (int x = 0; x < 8; x++) {
+			pieces.add(new Pawn(PlayerColor.WHITE, this, new Coordinate(x,1)));
+			pieces.add(new Pawn(PlayerColor.BLACK, this, new Coordinate(x,6)));
 		}
 		
 		pieces.add(new Rook(PlayerColor.WHITE, this, new Coordinate(0,0)));
@@ -44,13 +44,14 @@ public class Board {
 	}
 	
 	/**
-	 * Creates a board.
+	 * Creates a board with various sizes and starting positions.
 	 * @param width x size.
 	 * @param height y size.
 	 */
-	public Board(int width, int height) {
-		 xSize = 8;
-		 ySize = 8;
+	public Board(int width, int height, List<Piece> pieces) {
+		 this.width = width;
+		 this.height = height;
+		 this.pieces = pieces;
 	}
 	
 	public CheckState getCheckState() {
@@ -75,7 +76,7 @@ public class Board {
 		return null;
 	}
 	
-	public PlayerColor getColor(Coordinate coor) {
+	public PlayerColor getPlayerColor(Coordinate coor) {
 		if (!inBounds(coor)) return PlayerColor.NONE;
 		for (Piece piece: pieces) {
 			if (piece.getPos().equals(coor)) return piece.getPlayerColor();
@@ -88,31 +89,72 @@ public class Board {
 				(getPiece(coor).getPlayerColor() != color);
 	}
 	
+	public boolean isOpponent(Coordinate coor, PlayerColor color) {
+		return (getPiece(coor) != null) && 
+				(getPiece(coor).getPlayerColor() != color);
+	}
+	
 	/**
 	 * Checks if a coordinate is within the bounds of the board.
 	 * @param coor
 	 * @return 
 	 */
 	public boolean inBounds(Coordinate coor) {
-		return (coor.getX() >= 0 && coor.getX() < xSize && 
-				coor.getY() >= 0 && coor.getY() < ySize);
+		return (coor.getX() >= 0 && coor.getX() < width && 
+				coor.getY() >= 0 && coor.getY() < height);
 	}
 	
 	/**
 	 * Builds a moveList for all pieces.
-	 * @param color
+	 * @param color Current Player
+	 * @return CHeckState
 	 */
-	public void buildMoveList(PlayerColor color) {
-
+	public CheckState buildMoveList(PlayerColor color) {
 		// Build threat list to determine moves limits first.
-		Threat threat = new Threat(this);
+		threat = new Threat(this);
+		int moveCount = 0;
+		
 		for (Piece piece: getPieces(color.getOpponent())) {
 			piece.getThreats(threat);
 		}
 		
-		List<Piece> colorPieces = getPieces(color);
-		//TODO
+		// Build moveLists.
 		
+		for (Piece piece: getPieces(color)) {
+			if (piece instanceof King) {
+				piece.buildMoveList(null, new ArrayList<>(threat.getPos()));
+				moveCount += piece.getMoveList().size();
+			} else {
+				// A single direct threat can be blocked or taken if the piece is not
+				// already blocking an indirect threat. 
+				// 2+ direct threats means only a king can move.
+				switch (threat.getDirect().size()) {
+				case 0:
+					piece.buildMoveList(null, threat.getIndirect(piece));
+					moveCount += piece.getMoveList().size();
+					break;
+				case 1:
+					piece.buildMoveList(threat.getDirect().get(0), threat.getIndirect(piece));
+					moveCount += piece.getMoveList().size();
+					break;
+				default:
+					piece.setMoveList(null);
+					break;
+				}
+			}				
+		}
+		
+		// Calculate Check State
+		if (moveCount == 0) {
+			checkState = (threat.getDirect().size() > 0)
+					? CheckState.CHECK_MATE
+					: CheckState.STALE_MATE;
+		} else {
+			checkState = (threat.getDirect().size() > 0)
+					? CheckState.CHECK
+					: CheckState.NONE;
+		}
+		return checkState;
 	}
 
 	public List<Piece> getPieces() {
@@ -128,8 +170,13 @@ public class Board {
 	}
 
 	public void removePiece(Piece piece) {
-		if (pieces.contains(piece)) {
+		if (piece != null && pieces.contains(piece)) {
 			pieces.remove(pieces.indexOf(piece));
 		}
 	}
+	
+	public Threat getThreat() {
+		return threat;
+	}
+
 }

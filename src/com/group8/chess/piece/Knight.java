@@ -1,5 +1,7 @@
 package com.group8.chess.piece;
 
+import java.util.List;
+
 import com.group8.chess.util.Board;
 import com.group8.chess.util.Compass;
 import com.group8.chess.util.Coordinate;
@@ -22,6 +24,19 @@ public class Knight extends Piece {
 				addDirectThreat(threat, getPos(), coor);
 			}
 		}
+	}
+
+	@Override
+	public void buildMoveList(List<Coordinate> bounds, List<Coordinate> invalid) {
+		Coordinate coor;
+		getMoveList().clear();
+		for (Compass compass: Compass.PRINCIPAL) {
+			coor = getPos().offset(compass);
+			if (getBoard().inBounds(coor) && getBoard().getPlayerColor(coor) != getPlayerColor()) {
+				getMoveList().add(coor);
+			}
+		}
+		addLimits(bounds, invalid);
 	}
 
 }

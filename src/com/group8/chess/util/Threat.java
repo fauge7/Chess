@@ -2,8 +2,10 @@ package com.group8.chess.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.group8.chess.piece.Piece;
 
@@ -15,7 +17,7 @@ import com.group8.chess.piece.Piece;
  */
 public class Threat {
 	private Board board;
-	private List<Coordinate> pos = new ArrayList<>();
+	private Set<Coordinate> pos = new HashSet<>();
 	private List<List<Coordinate>> direct = new ArrayList<>();
 	private Map<Piece,List<Coordinate>> indirect = new HashMap<>();
 	private Piece bound = null;
@@ -32,7 +34,7 @@ public class Threat {
 		this.bound = bound;
 	}
 
-	public List<Coordinate> getPos() {
+	public Set<Coordinate> getPos() {
 		return pos;
 	}
 
@@ -42,6 +44,16 @@ public class Threat {
 
 	public Map<Piece,List<Coordinate>> getIndirect() {
 		return indirect;
+	}
+	
+	/**
+	 * Gets an indirect threat.
+	 * @param piece Bound piece.
+	 * @return
+	 */
+	public List<Coordinate> getIndirect(Piece piece) {
+		if (!indirect.containsKey(piece)) return null;
+		return indirect.get(piece);
 	}
 	
 	/**

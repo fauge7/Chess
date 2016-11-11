@@ -40,5 +40,10 @@ public class Coordinate {
 		if (getClass() != obj.getClass()) return false;
 		return (x == ((Coordinate)obj).x) && (y == ((Coordinate)obj).y);
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + x + "," + y + ")";
+	}
 
 }

@@ -22,16 +22,28 @@ public enum Compass {
 	
 	private final int x, y;
 	
+	/**
+	 * All Cardinal (horizontal and vertical) directions.
+	 */
 	public static final EnumSet<Compass> CARDINAL = EnumSet.of(
 			Compass.N, Compass.E, Compass.S, Compass.W);
 
+	/**
+	 * All ordinal (diagonal) directions.
+	 */
 	public static final EnumSet<Compass> ORDINAL = EnumSet.of(
 			Compass.NE, Compass.SE, Compass.SW, Compass.NW);
 
+	/**
+	 * All cardinal and ordinal (horizontal, vertical, and diagonal).
+	 */
 	public static final EnumSet<Compass> EIGHT = EnumSet.of(
 			Compass.N, Compass.E, Compass.S, Compass.W,
 			Compass.NE, Compass.SE, Compass.SW, Compass.NW);
 
+	/**
+	 * All Principal direction (example: North-by-Northwest).
+	 */
 	public static final EnumSet<Compass> PRINCIPAL = EnumSet.of(
 			Compass.NNE, Compass.ENE, Compass.ESE, Compass.SSE,    
 			Compass.SSW, Compass.WSW, Compass.WNW, Compass.NNW); 

@@ -1,5 +1,7 @@
 package com.group8.chess.piece;
 
+import java.util.List;
+
 import com.group8.chess.util.Board;
 import com.group8.chess.util.Compass;
 import com.group8.chess.util.Coordinate;
@@ -15,6 +17,11 @@ public class Bishop extends Piece {
 	@Override
 	public void getThreats(Threat threat) {
 		getRayThreats(threat, Compass.ORDINAL);
+	}
+
+	@Override
+	public void buildMoveList(List<Coordinate> bounds, List<Coordinate> invalid) {
+		buildRayMoveList(Compass.ORDINAL, bounds, invalid);
 	}
 
 }

@@ -1,5 +1,5 @@
 package com.group8.chess.util;
 
 public enum CheckState {
-	NONE, CHECK, CHECK_MATE;
+	NONE, CHECK, CHECK_MATE, STALE_MATE;
 }
