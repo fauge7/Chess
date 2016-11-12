@@ -1,5 +1,7 @@
 package com.group8.chess.piece;
 
+import java.util.List;
+
 import com.group8.chess.util.Board;
 import com.group8.chess.util.Compass;
 import com.group8.chess.util.Coordinate;
@@ -14,7 +16,12 @@ public class Queen extends Piece {
 
 	@Override
 	public void getThreats(Threat threat) {
-		getRayThreats(threat, Compass.ORDINAL);
+		getRayThreats(threat, Compass.EIGHT);
+	}
+
+	@Override
+	public void buildMoveList(List<Coordinate> bounds, List<Coordinate> invalid) {
+		buildRayMoveList(Compass.EIGHT, bounds, invalid);
 	}
 
 

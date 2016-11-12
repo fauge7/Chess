@@ -1,5 +1,7 @@
 package com.group8.chess.piece;
 
+import java.util.List;
+
 import com.group8.chess.util.Board;
 import com.group8.chess.util.Coordinate;
 import com.group8.chess.util.PlayerColor;
@@ -14,7 +16,7 @@ public class Pawn extends Piece {
 	@Override
 	public void getThreats(Threat threat) {
 		Coordinate coor;
-		for (int x = -1; x <= 1; x =+ 2) {
+		for (int x = -1; x < 2; x += 2) {
 			coor = getPos().offset(x,getPlayerColor().getForward());
 			if (getBoard().inBounds(coor)) {
 				threat.getPos().add(coor);
@@ -23,6 +25,30 @@ public class Pawn extends Piece {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void buildMoveList(List<Coordinate> bounds, List<Coordinate> invalid) {
+		Coordinate coor;
+		getMoveList().clear();
+		
+		// Forward if blank
+		coor = getPos().offset(0, getPlayerColor().getForward());
+		if (getBoard().inBounds(coor) && getBoard().getPiece(coor) == null) getMoveList().add(coor);
+
+		// Forward 2 if blank and has not moved.
+		if (!hasMoved()) {
+			coor = getPos().offset(0, getPlayerColor().getForward()*2);
+			if (getBoard().inBounds(coor) && getBoard().getPiece(coor) == null) getMoveList().add(coor);
+		}
+		
+		// Diagonal forward if opposing piece.
+		for (int x = -1; x <= 1; x += 2) {
+			coor = getPos().offset(x, getPlayerColor().getForward());
+			if (getBoard().isOpponent(coor,getPlayerColor())) getMoveList().add(coor);
+		}
+
+		addLimits(bounds, invalid);
 	}
 
 }

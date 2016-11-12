@@ -15,7 +15,7 @@ public abstract class Piece {
 	private PlayerColor playerColor;
 	private Board board;
 
-	private Coordinate pos;
+	private Coordinate coordinate;
 	private boolean hasMoved;
 	private Image image = null;	
 	private List<Coordinate> moveList = new ArrayList<>();	
@@ -23,15 +23,11 @@ public abstract class Piece {
 	public Piece(PlayerColor playerColor, Board board, Coordinate pos) {
 		this.playerColor = playerColor;
 		this.board = board;
-		this.pos = pos;
+		this.coordinate = pos;
 	}
 	
 	public PlayerColor getPlayerColor() {
 		return playerColor;
-	}
-	
-	public void setPlayerColor(PlayerColor playerColor) {
-		this.playerColor = playerColor;
 	}
 
 	public Board getBoard() {
@@ -39,11 +35,16 @@ public abstract class Piece {
 	}
 
 	public Coordinate getPos() {
-		return pos;
+		return coordinate;
 	}
 	
-	public void move(Coordinate pos) {
-		this.pos = pos;
+	public void move(int x, int y) {
+		move(new Coordinate(x,y));
+	}
+	
+	public void move(Coordinate coordinate) {
+		board.removePiece(board.getPiece(coordinate));
+		this.coordinate = coordinate;
 		hasMoved = true;
 	}
 	
@@ -51,6 +52,10 @@ public abstract class Piece {
 		return hasMoved;
 	}
 
+	public boolean canMove() {
+		return (moveList != null) && (moveList.size() > 0);
+	}
+	
 	public List<Coordinate> getMoveList() {
 		return moveList;
 	}
@@ -69,6 +74,36 @@ public abstract class Piece {
 	
 	
 	abstract public void getThreats(Threat threat);
+	
+	/**
+	 * Generate a move list.
+	 * @param bounds list of coordinates a piece must move to.
+	 * @param invalid list of coordinates a piece can't move to.
+	 */
+	abstract public void buildMoveList(List<Coordinate> bounds, List<Coordinate> invalid);
+	
+	/**
+	 * Generates a move list based on rays (can move until a location is found).
+	 * 
+	 * @param directions
+	 * @param bounds
+	 * @param invalid
+	 */
+	protected void buildRayMoveList(EnumSet<Compass> directions, List<Coordinate> bounds, List<Coordinate> invalid) {
+		getMoveList().clear();
+		for (Compass dir: directions) {
+			buildRayMoveList(dir);
+		}
+		addLimits(bounds, invalid);
+	}
+	
+	private void buildRayMoveList(Compass direction) {
+		Coordinate coor = getPos().offset(direction);
+		while (board.inBounds(coor) && board.getPlayerColor(coor) != getPlayerColor()) {
+			getMoveList().add(coor);
+			coor = coor.offset(direction);
+		}
+	}
 	
 	/**
 	 * Generates a set of threats based on pieces which can move 
@@ -94,10 +129,10 @@ public abstract class Piece {
 		while (board.inBounds(coor)) {
 			if (indirect == null) threat.addPos(coor);
 			ray.add(coor);
-			if (board.getColor(coor) == getPlayerColor()) {
+			if (board.getPlayerColor(coor) == getPlayerColor()) {
 				return threat;
 			}
-			if (board.getColor(coor) != PlayerColor.NONE) {
+			if (board.getPlayerColor(coor) != PlayerColor.NONE) {
 				// Check for Direct Threat
 				if (board.getPiece(coor) instanceof King) {
 					if (indirect == null) {
@@ -122,6 +157,53 @@ public abstract class Piece {
 		direct.add(getPos());
 		direct.add(to);
 		threat.getDirect().add(direct);		
+	}
+
+	/**
+	 * Add coordinate bounds and limits.
+	 * @param bounds Reduces moveList to only coordinates within the bounds.
+	 * @param invalid Reduces moveList by any invalid coordinates.
+	 */
+	protected void addLimits(List<Coordinate> bounds, List<Coordinate> invalid) {
+		addBounds(bounds);
+		addInvalid(invalid);
+	}
+
+	/**
+	 * @param bounds Reduces moveList to only coordinates within the bounds.
+	 */
+	protected void addBounds(List<Coordinate> bounds) {
+		if (bounds == null) return;
+		int i = 0;
+		while (i < moveList.size()) {
+			if (bounds.contains(moveList.get(i))) {
+				i++;
+			} else {
+				moveList.remove(i);
+			}
+		}
+	}
+	
+	/**
+	 * @param invalid Reduces moveList by any invalid coordinates.
+	 */
+	protected void addInvalid(List<Coordinate> invalid) {
+		if (invalid == null) return;
+		for (Coordinate coor: invalid) {
+			int index = moveList.indexOf(coor);
+			if (index > -1) moveList.remove(index);
+		}
+	}
+	
+	/**
+	 * Returns a string value for a piece's name and color.
+	 * Ex: White Queen would be WQu
+	 * @return
+	 */
+	@Override
+	public String toString() {
+		return getPlayerColor().name().charAt(0) + 
+				getClass().getSimpleName().substring(0, 2);
 	}
 
 }
