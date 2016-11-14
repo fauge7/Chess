@@ -79,7 +79,7 @@ public class BoardFrame extends JPanel {
 		for(int x = 0; x < b.height; x++){
 			for(int y = 0; y < b.width; y++){
 				if(b.getPiece(x, y) != null){
-					g.drawImage(getImage(b.getPiece(x,y)),128*x+34+15/2,128*y+34+15/2,null);
+					g.drawImage(getImage(b.getPiece(x,y)),128*x+34+15/2,128*y+34+15/4,null);
 //					System.out.println(b.getPiece(x,y).toString());
 //					g.drawImage(getImage("wRo"),0,0,null);
 				}
