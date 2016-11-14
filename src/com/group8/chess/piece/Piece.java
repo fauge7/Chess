@@ -94,7 +94,7 @@ public abstract class Piece {
 		for (Compass dir: directions) {
 			buildRayMoveList(dir);
 		}
-		addLimits(bounds, invalid);
+//		addLimits(bounds, invalid);
 	}
 	
 	private void buildRayMoveList(Compass direction) {

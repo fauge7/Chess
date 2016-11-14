@@ -34,12 +34,14 @@ public class Pawn extends Piece {
 		
 		// Forward if blank
 		coor = getPos().offset(0, getPlayerColor().getForward());
-		if (getBoard().inBounds(coor) && getBoard().getPiece(coor) == null) getMoveList().add(coor);
+		if (getBoard().inBounds(coor) && getBoard().getPiece(coor) == null) 
+			getMoveList().add(coor);
 
 		// Forward 2 if blank and has not moved.
 		if (!hasMoved()) {
 			coor = getPos().offset(0, getPlayerColor().getForward()*2);
-			if (getBoard().inBounds(coor) && getBoard().getPiece(coor) == null) getMoveList().add(coor);
+			if (getBoard().inBounds(coor) && getBoard().getPiece(coor) == null)
+				getMoveList().add(coor);
 		}
 		
 		// Diagonal forward if opposing piece.
@@ -47,8 +49,7 @@ public class Pawn extends Piece {
 			coor = getPos().offset(x, getPlayerColor().getForward());
 			if (getBoard().isOpponent(coor,getPlayerColor())) getMoveList().add(coor);
 		}
-
-		addLimits(bounds, invalid);
+//		addLimits(bounds, invalid);
 	}
 
 }

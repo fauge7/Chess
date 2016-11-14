@@ -75,7 +75,13 @@ public class Board {
 		}
 		return null;
 	}
-	
+	public void setPiece(int x, int y){
+		getPiece(new Coordinate(x,y));
+	}
+	public void movePiece(Coordinate from, Coordinate to){
+		Piece temp = getPiece(from);
+		temp.move(to);
+	}
 	public PlayerColor getPlayerColor(Coordinate coor) {
 		if (!inBounds(coor)) return PlayerColor.NONE;
 		for (Piece piece: pieces) {
