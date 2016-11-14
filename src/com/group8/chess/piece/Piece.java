@@ -101,6 +101,7 @@ public abstract class Piece {
 		Coordinate coor = getPos().offset(direction);
 		while (board.inBounds(coor) && board.getPlayerColor(coor) != getPlayerColor()) {
 			getMoveList().add(coor);
+			if (board.getPlayerColor(coor) != PlayerColor.NONE) return;
 			coor = coor.offset(direction);
 		}
 	}
@@ -129,9 +130,11 @@ public abstract class Piece {
 		while (board.inBounds(coor)) {
 			if (indirect == null) threat.addPos(coor);
 			ray.add(coor);
+			// Same Color
 			if (board.getPlayerColor(coor) == getPlayerColor()) {
 				return threat;
 			}
+			// Opponent Piece
 			if (board.getPlayerColor(coor) != PlayerColor.NONE) {
 				// Check for Direct Threat
 				if (board.getPiece(coor) instanceof King) {
@@ -202,8 +205,11 @@ public abstract class Piece {
 	 */
 	@Override
 	public String toString() {
-		return getPlayerColor().name().charAt(0) + 
-				getClass().getSimpleName().substring(0, 2);
+		return getPlayerColor().name().charAt(0) + getClass().getSimpleName().substring(0, 2) + " " + coordinate;
+	}
+
+	public String getName() {
+		return getPlayerColor().name().charAt(0) + getClass().getSimpleName().substring(0, 2);
 	}
 
 }
