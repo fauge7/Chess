@@ -47,8 +47,52 @@ public class Pawn extends Piece {
 			coor = getPos().offset(x, getPlayerColor().getForward());
 			if (getBoard().isOpponent(coor,getPlayerColor())) getMoveList().add(coor);
 		}
+		
+		// Check for en-passant capture.
+		for (int x = -1; x <= 1; x += 2) {
+			coor = getPos().offset(x, 0);
+			if (getBoard().getPassant() != null && getBoard().getPassant().getPos().equals(coor)) {
+				System.out.println("Moved"); //TODO: remove
+				getMoveList().add(coor.offset(0,getPlayerColor().getForward()));
+			}
+		}
 
 		addLimits(bounds, invalid);
 	}
+
+
+	// If a pawn reaches the opponents back row, replace it with a Queen.
+	@Override
+	public void move(int x, int y) {
+		move(new Coordinate(x, y));
+	}
+
+	@Override
+	public void move(Coordinate coor) {
+		// Check for back row.
+		if (coor.getY() == (getPlayerColor() == PlayerColor.WHITE ? getBoard().height-1 : 0)) {
+			getBoard().removePiece(this);
+			getBoard().removePiece(getBoard().getPiece(coor));
+			new Queen(getPlayerColor(), getBoard(), coor);
+		} else {
+			// Check for capture passant.
+			if (getBoard().getPassant() != null) {
+				Piece offsetPiece = getBoard().getPiece(coor.offset(0,-getPlayerColor().getForward()));
+				if (getBoard().getPassant().equals(offsetPiece)) {
+					getBoard().getPieces().remove(getBoard().getPassant());
+				}
+			}
+			// Check for moving forward-2 (set up en-passant possiblity).
+			if (coor.getY() == getPos().getY() + getPlayerColor().getForward() * 2) {
+				super.move(coor); // super.move() first, as it clears passant.
+				getBoard().setPassant(this);
+			} else {
+				super.move(coor);
+				getBoard().setPassant(null);
+			}
+		}
+		
+	}
+
 
 }

@@ -23,6 +23,7 @@ public abstract class Piece {
 	public Piece(PlayerColor playerColor, Board board, Coordinate pos) {
 		this.playerColor = playerColor;
 		this.board = board;
+		this.board.getPieces().add(this);
 		this.coordinate = pos;
 	}
 	
@@ -45,6 +46,7 @@ public abstract class Piece {
 	public void move(Coordinate coordinate) {
 		board.removePiece(board.getPiece(coordinate));
 		this.coordinate = coordinate;
+		board.setPassant(null);
 		hasMoved = true;
 	}
 	
@@ -159,7 +161,7 @@ public abstract class Piece {
 		List<Coordinate> direct = new ArrayList<>();
 		direct.add(getPos());
 		direct.add(to);
-		threat.getDirect().add(direct);		
+		threat.getDirect().add(direct);
 	}
 
 	/**

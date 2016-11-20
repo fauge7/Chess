@@ -22,7 +22,7 @@ public class ClientUI {
 	private Board board;
 	private boolean highlight[][];
 	
-	private Piece selectedPiece = null;
+	private Coordinate selectedCoor = null;
 	
 	private int boardSize, pieceSize;
 	private Map<String, BufferedImage> imageMap = new HashMap<>(); 
@@ -136,8 +136,8 @@ public class ClientUI {
 			return;
 		}
 		
-		if (selectedPiece == null) {
-			selectedPiece = piece;
+		if (selectedCoor == null) {
+			selectedCoor = piece.getPos();
 			if (piece != null) {
 				board.buildMoveList(piece.getPlayerColor());
 				clearHighlights();
@@ -147,11 +147,11 @@ public class ClientUI {
 
 			}
 		} else {
-			if (piece != null && board.getPiece(coor).equals(selectedPiece)) {
-				selectedPiece = null;
+			if (piece != null && coor.equals(selectedCoor)) {
+				selectedCoor = null;
 			} else {
-				selectedPiece.move(coor);
-				selectedPiece = null;
+				board.getPiece(selectedCoor).move(coor);
+				selectedCoor = null;
 				updateDisplay();
 			}
 			clearHighlights();
