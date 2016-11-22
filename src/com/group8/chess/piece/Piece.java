@@ -23,6 +23,7 @@ public abstract class Piece {
 	public Piece(PlayerColor playerColor, Board board, Coordinate pos) {
 		this.playerColor = playerColor;
 		this.board = board;
+		this.board.getPieces().add(this);
 		this.coordinate = pos;
 	}
 	
@@ -45,6 +46,7 @@ public abstract class Piece {
 	public void move(Coordinate coordinate) {
 		board.removePiece(board.getPiece(coordinate));
 		this.coordinate = coordinate;
+		board.setPassant(null);
 		hasMoved = true;
 	}
 	
@@ -101,6 +103,7 @@ public abstract class Piece {
 		Coordinate coor = getPos().offset(direction);
 		while (board.inBounds(coor) && board.getPlayerColor(coor) != getPlayerColor()) {
 			getMoveList().add(coor);
+			if (board.getPlayerColor(coor) != PlayerColor.NONE) return;
 			coor = coor.offset(direction);
 		}
 	}
@@ -129,9 +132,11 @@ public abstract class Piece {
 		while (board.inBounds(coor)) {
 			if (indirect == null) threat.addPos(coor);
 			ray.add(coor);
+			// Same Color
 			if (board.getPlayerColor(coor) == getPlayerColor()) {
 				return threat;
 			}
+			// Opponent Piece
 			if (board.getPlayerColor(coor) != PlayerColor.NONE) {
 				// Check for Direct Threat
 				if (board.getPiece(coor) instanceof King) {
@@ -156,7 +161,7 @@ public abstract class Piece {
 		List<Coordinate> direct = new ArrayList<>();
 		direct.add(getPos());
 		direct.add(to);
-		threat.getDirect().add(direct);		
+		threat.getDirect().add(direct);
 	}
 
 	/**
@@ -202,8 +207,11 @@ public abstract class Piece {
 	 */
 	@Override
 	public String toString() {
-		return getPlayerColor().name().charAt(0) + 
-				getClass().getSimpleName().substring(0, 2);
+		return getPlayerColor().name().charAt(0) + getClass().getSimpleName().substring(0, 2) + " " + coordinate;
+	}
+
+	public String getName() {
+		return getPlayerColor().name().charAt(0) + getClass().getSimpleName().substring(0, 2);
 	}
 
 }

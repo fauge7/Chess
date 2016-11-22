@@ -10,6 +10,7 @@ public class Board {
 	public final int width, height;
 	private CheckState checkState = CheckState.NONE;
 	private Threat threat;
+	private Piece passant = null;
 	
 	/** 
 	 * Creates a standard 8x8 board.
@@ -19,27 +20,27 @@ public class Board {
 		
 		// Default Board state
 		for (int x = 0; x < 8; x++) {
-			pieces.add(new Pawn(PlayerColor.WHITE, this, new Coordinate(x,1)));
-			pieces.add(new Pawn(PlayerColor.BLACK, this, new Coordinate(x,6)));
+			new Pawn(PlayerColor.WHITE, this, new Coordinate(x,1));
+			new Pawn(PlayerColor.BLACK, this, new Coordinate(x,6));
 		}
 		
-		pieces.add(new Rook(PlayerColor.WHITE, this, new Coordinate(0,0)));
-		pieces.add(new Knight(PlayerColor.WHITE, this, new Coordinate(1,0)));
-		pieces.add(new Bishop(PlayerColor.WHITE, this, new Coordinate(2,0)));
-		pieces.add(new Queen(PlayerColor.WHITE, this, new Coordinate(3,0)));
-		pieces.add(new King(PlayerColor.WHITE, this, new Coordinate(4,0)));
-		pieces.add(new Bishop(PlayerColor.WHITE, this, new Coordinate(5,0)));
-		pieces.add(new Knight(PlayerColor.WHITE, this, new Coordinate(6,0)));
-		pieces.add(new Rook(PlayerColor.WHITE, this, new Coordinate(7,0)));
+		new Rook(PlayerColor.WHITE, this, new Coordinate(0,0));
+		new Knight(PlayerColor.WHITE, this, new Coordinate(1,0));
+		new Bishop(PlayerColor.WHITE, this, new Coordinate(2,0));
+		new Queen(PlayerColor.WHITE, this, new Coordinate(3,0));
+		new King(PlayerColor.WHITE, this, new Coordinate(4,0));
+		new Bishop(PlayerColor.WHITE, this, new Coordinate(5,0));
+		new Knight(PlayerColor.WHITE, this, new Coordinate(6,0));
+		new Rook(PlayerColor.WHITE, this, new Coordinate(7,0));
 		
-		pieces.add(new Rook(PlayerColor.BLACK, this, new Coordinate(0,7)));
-		pieces.add(new Knight(PlayerColor.BLACK, this, new Coordinate(1,7)));
-		pieces.add(new Bishop(PlayerColor.BLACK, this, new Coordinate(2,7)));
-		pieces.add(new Queen(PlayerColor.BLACK, this, new Coordinate(3,7)));
-		pieces.add(new King(PlayerColor.BLACK, this, new Coordinate(4,7)));
-		pieces.add(new Bishop(PlayerColor.BLACK, this, new Coordinate(5,7)));
-		pieces.add(new Knight(PlayerColor.BLACK, this, new Coordinate(6,7)));
-		pieces.add(new Rook(PlayerColor.BLACK, this, new Coordinate(7,7)));
+		new Rook(PlayerColor.BLACK, this, new Coordinate(0,7));
+		new Knight(PlayerColor.BLACK, this, new Coordinate(1,7));
+		new Bishop(PlayerColor.BLACK, this, new Coordinate(2,7));
+		new Queen(PlayerColor.BLACK, this, new Coordinate(3,7));
+		new King(PlayerColor.BLACK, this, new Coordinate(4,7));
+		new Bishop(PlayerColor.BLACK, this, new Coordinate(5,7));
+		new Knight(PlayerColor.BLACK, this, new Coordinate(6,7));
+		new Rook(PlayerColor.BLACK, this, new Coordinate(7,7));
 		
 	}
 	
@@ -110,6 +111,10 @@ public class Board {
 	 * @return CHeckState
 	 */
 	public CheckState buildMoveList(PlayerColor color) {
+		if (!canCheckMate(PlayerColor.WHITE) && !canCheckMate(PlayerColor.BLACK)) {
+			return CheckState.STALE_MATE;
+		}
+		
 		// Build threat list to determine moves limits first.
 		threat = new Threat(this);
 		int moveCount = 0;
@@ -157,6 +162,16 @@ public class Board {
 		return checkState;
 	}
 
+	// Need at least a King and either 2 other pieces, or one non-Knight.
+	private boolean canCheckMate(PlayerColor color) {
+		if (getPieces(color).size() > 2) return true; //Over 2 Pieces.
+		if (getPieces(color).size() < 2) return false; //Only King left.
+		for (Piece piece: getPieces(color)) {
+			if (!(piece instanceof King) && !(piece instanceof Knight)) return true;
+		}
+		return false;
+	}
+
 	public List<Piece> getPieces() {
 		return pieces;
 	}
@@ -177,6 +192,20 @@ public class Board {
 	
 	public Threat getThreat() {
 		return threat;
+	}
+	
+	
+	/**
+	 * Tracks Pawn movements for en-passant.
+	 * @return last moved Pawn if the pawn moved forward two, else null.
+	 */
+	public Piece getPassant() {
+		return passant;
+	}
+
+	// Tracks pawn movements for en-passant.
+	public void setPassant(Piece piece) {
+		passant = piece;
 	}
 
 }
