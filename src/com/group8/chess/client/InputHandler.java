@@ -15,14 +15,14 @@ public class InputHandler  implements MouseListener{
 	public void mouseClicked(MouseEvent me) {
 		// TODO Auto-generated method stub
 		if(selected && selectedPiece != null){
-			BoardFrame.b.movePiece(selectedPiece.getPos(), new Coordinate(me.getX()/128,me.getY()/128));
+			BoardFrame.b.movePiece(selectedPiece.getPos(), new Coordinate(me.getX()/59,me.getY()/59));
 			selected = false;
 			lastClickCoord = null;
 			selectedPiece = null;
 		}
 		else{
-			lastClickCoord = new Coordinate(me.getX()/128, me.getY()/128);
-			selectedPiece = BoardFrame.b.getPiece(me.getX()/128, me.getY()/128);
+			lastClickCoord = new Coordinate(me.getX()/59, me.getY()/59);
+			selectedPiece = BoardFrame.b.getPiece(me.getX()/59, me.getY()/59);
 			selected = true;
 		}
 	}

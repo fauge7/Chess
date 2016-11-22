@@ -1,6 +1,3 @@
-/com/
-/test/
-/Images/
 /Bishop_B.png
 /Bishop_W.png
 /King_B.png
@@ -14,3 +11,5 @@
 /Rook_B.png
 /Rook_W.png
 /board.png
+/com/
+/Capture.PNG

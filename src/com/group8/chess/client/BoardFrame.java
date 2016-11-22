@@ -2,6 +2,7 @@ package com.group8.chess.client;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import com.group8.chess.piece.Bishop;
 import com.group8.chess.piece.King;
@@ -27,6 +29,8 @@ public class BoardFrame extends JPanel {
 	static HashMap<String,BufferedImage> peices;
 	public static Board b;
 	static BufferedImage background;
+	private GridLayout layout;
+	private JTextArea console;
 	public BoardFrame() {
 		// TODO Auto-generated constructor stub
 		peices = new HashMap<>();
@@ -68,8 +72,10 @@ public class BoardFrame extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		peices.add(file.getName(),new BufferedImage())
+		console = new JTextArea();
+		layout = new GridLayout(2, 1);
+		add(console);
+//		setLayout(layout);
 	}
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -79,7 +85,7 @@ public class BoardFrame extends JPanel {
 		for(int x = 0; x < b.height; x++){
 			for(int y = 0; y < b.width; y++){
 				if(b.getPiece(x, y) != null){
-					g.drawImage(getImage(b.getPiece(x,y)),128*x+34+15/2,128*y+34+15/4,null);
+					g.drawImage(getImage(b.getPiece(x,y)),59*x,59*y,null);
 //					System.out.println(b.getPiece(x,y).toString());
 //					g.drawImage(getImage("wRo"),0,0,null);
 				}
@@ -87,7 +93,7 @@ public class BoardFrame extends JPanel {
 		}
 		g.setColor(Color.BLUE);
 		if(InputHandler.lastClickCoord!= null){
-			g.drawRect(InputHandler.lastClickCoord.getX()*128+2, InputHandler.lastClickCoord.getY()*128-1, 129, 129);
+			g.drawRect(InputHandler.lastClickCoord.getX()*59, InputHandler.lastClickCoord.getY()*59, 59, 59);
 		}
 		List<Coordinate> movelist = new ArrayList<Coordinate>();
 		if(InputHandler.selectedPiece != null){
@@ -120,7 +126,7 @@ public class BoardFrame extends JPanel {
 			}
 			g.setColor(Color.GREEN);
 			for(Coordinate c : movelist){
-				g.drawRect(c.getX()*128+2, c.getY()*128-1, 128, 128);
+				g.drawRect(c.getX()*59, c.getY()*59, 59, 59);
 			}
 		}
 	}

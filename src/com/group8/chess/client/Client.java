@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 public class Client{
 
-	JPanel main;
+//	JPanel main;
 	
 	public Client() {
 	// TODO Auto-generated constructor stub
