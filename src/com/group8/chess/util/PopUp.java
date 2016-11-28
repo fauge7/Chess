@@ -1,14 +1,11 @@
 package com.group8.chess.util;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
-
-import org.omg.PortableServer.ServantRetentionPolicyValue;
 
 public class PopUp {
     //variables for buttons
@@ -21,19 +18,19 @@ public class PopUp {
     {
     	switch (type) {
 		case CONNECTING:
-			
+			connectServer();
 			break;
 		case WHITE_TURN:
 			whiteTurn();
 			break;
 		case BLACK_TURN:
-			
+			blackTurn();
 			break;
 		case CHECK:
-			
+			check();
 			break;
 		case CHECKMATE:
-			
+			checkMate();
 			break;
 		default:
 			break;
@@ -46,27 +43,35 @@ public class PopUp {
     public static void main(String[] args) {
         
     }
-    //button template
-    private void basicButton() {
+    //button templates
+    private void noButton() {  //popup no button
+        frame = new JFrame();
+         frame.setBounds(100, 100, 450, 300);
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         frame.getContentPane().setLayout(null);
+         
+         txt = new JTextField();
+         txt.setText("");
+         txt.setBounds(180, 20, 85, 20);
+         txt.setBounds(frame.getWidth()/2-txt.getWidth()/2, 20, txt.getWidth(), txt.getHeight());
+         frame.getContentPane().add(txt);
+         txt.setColumns(10);
+      
+     }
+
+    private void oneButton() {  //popup with one button / OK button
        frame = new JFrame();
-       frame.setVisible(true);
         frame.setBounds(100, 100, 450, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
         
-        txt = new JTextField("");
-        txt.setEditable(false);
-        txt.setBounds(frame.getWidth()/2, 21, 200, 20);
-        txt.setBounds(frame.getWidth()/2-txt.getWidth()/2, 21, txt.getWidth(), txt.getHeight());
+        txt = new JTextField();
+        txt.setText("");
+        txt.setBounds(180, 20, 85, 20);
+        txt.setBounds(frame.getWidth()/2-txt.getWidth()/2, 20, txt.getWidth(), txt.getHeight());
         frame.getContentPane().add(txt);
         txt.setColumns(10);
-        
-        txtButton = new JTextField();
-        txtButton.setText("Button");
-        txtButton.setBounds(frame.getWidth()/2-85/2, 20, 85, 20);
-        frame.getContentPane().add(txtButton);
-        txtButton.setColumns(10);
-        txt.setText("Player White Turn");
+
         JButton btnOk = new JButton("OK");
         btnOk.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -74,116 +79,64 @@ public class PopUp {
             }
         });
         btnOk.setBounds(166, 159, 89, 23);
-        frame.getContentPane().add(btnOk);     
+        frame.getContentPane().add(btnOk);      
     }
+    private void twoButton() {  //popup with two buttons / OK + Cancel buttons
+        frame = new JFrame();
+         frame.setBounds(100, 100, 450, 300);
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         frame.getContentPane().setLayout(null);
+         
+         txt = new JTextField();
+         txt.setText("");
+         txt.setBounds(180, 20, 85, 20);
+         txt.setBounds(frame.getWidth()/2-txt.getWidth()/2, 20, txt.getWidth(), txt.getHeight());
+         frame.getContentPane().add(txt);
+         txt.setColumns(10);
+
+         JButton btnOk = new JButton("OK");
+         JButton btnCan = new JButton("Cancel");
+         
+         btnOk.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent arg0) {
+                 frame.dispose();  //set action for OK button
+             }
+         });
+         btnOk.setBounds(110, 160, 90, 20);  //play with the bounds if needed
+         frame.getContentPane().add(btnOk);   
+
+
+         btnCan.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent arg0) {
+                 frame.dispose();  //set action for Cancel button
+             }
+         });
+         btnCan.setBounds(230, 160, 90, 20);  //play with the bounds if needed
+         frame.getContentPane().add(btnCan);  
+     }
+    
     private void whiteTurn() {
-        basicButton();
-        txt.setText("White turn");
-    	
+    	oneButton();
+    	txt.setText("White's Turn");
     }
     private void blackTurn() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(null);
-        
-        txtWhite = new JTextField();
-        txtWhite.setText("Player black Turn");
-        txtWhite.setBounds(169, 21, 86, 20);
-        frame.getContentPane().add(txtWhite);
-        txtWhite.setColumns(10);
-        
-        JButton btnOk = new JButton("OK");
-        btnOk.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                frame.dispose();
-            }
-        });
-        btnOk.setBounds(166, 159, 89, 23);
-        frame.getContentPane().add(btnOk);
+    	oneButton();
+    	txt.setText("Black's Turn");
     }
-    private void checkPop() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(null);
-        
-        txtWhite = new JTextField();
-        txtWhite.setText("Check");
-        txtWhite.setBounds(169, 21, 86, 20);
-        frame.getContentPane().add(txtWhite);
-        txtWhite.setColumns(10);
-        
-        JButton btnOk = new JButton("OK");
-        btnOk.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                frame.dispose();
-            }
-        });
-        btnOk.setBounds(166, 159, 89, 23);
-        frame.getContentPane().add(btnOk);
+    private void check() {
+    	oneButton();
+    	txt.setText("Check");
     }
-    private void cMatePop() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(null);
-        
-        txtWhite = new JTextField();
-        txtWhite.setText("Check Mate");
-        txtWhite.setBounds(169, 21, 86, 20);
-        frame.getContentPane().add(txtWhite);
-        txtWhite.setColumns(10);
-        
-        JButton btnOk = new JButton("OK");
-        btnOk.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                frame.dispose();
-            }
-        });
-        btnOk.setBounds(166, 159, 89, 23);
-        frame.getContentPane().add(btnOk);
+    private void checkMate() {
+    	oneButton();
+    	txt.setText("Check Mate");
     }
-    private void sMatePop() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(null);
-        
-        txtWhite = new JTextField();
-        txtWhite.setText("Stale Mate");
-        txtWhite.setBounds(169, 21, 86, 20);
-        frame.getContentPane().add(txtWhite);
-        txtWhite.setColumns(10);
-        
-        JButton btnOk = new JButton("OK");
-        btnOk.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                frame.dispose();
-            }
-        });
-        btnOk.setBounds(166, 159, 89, 23);
-        frame.getContentPane().add(btnOk);
+    private void staleMate() {
+    	oneButton();
+    	txt.setText("Stale Mate");
     }
-    private void connection() {
-        frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setLayout(null);
-        
-        txtWhite = new JTextField();
-        txtWhite.setText("Connecting to Server.\n Waiting for other player");
-        txtWhite.setBounds(169, 21, 86, 20);
-        frame.getContentPane().add(txtWhite);
-        txtWhite.setColumns(10);
-        
-        JButton btnOk = new JButton("OK");
-        btnOk.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                frame.dispose();
-            }
-        });
-        btnOk.setBounds(166, 159, 89, 23);
-        frame.getContentPane().add(btnOk);
+    private void connectServer() {
+    	noButton();
+    	txt.setText("Connecting to server:\nWaiting for other player.");
     }
 }

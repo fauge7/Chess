@@ -17,11 +17,13 @@ import javax.swing.JLabel;
 import com.group8.chess.piece.Piece;
 import com.group8.chess.util.Board;
 import com.group8.chess.util.Coordinate;
+import com.group8.chess.util.PlayerColor;
 
 public class ClientUI {
 	private Board board;
 	private boolean highlight[][];
-	
+	public static PlayerColor CurrentPlayerTurn = PlayerColor.WHITE;
+	public static PlayerColor thisPlayersColor = PlayerColor.WHITE;
 	private Coordinate selectedCoor = null;
 	
 	private int boardSize, pieceSize;
@@ -50,22 +52,22 @@ public class ClientUI {
 	private void buildImageMap() throws IOException {
 
 		// Build imageMap
-		imageMap.put("board", ImageIO.read(new File(PATH, "board.png")));
-		imageMap.put("highlight", ImageIO.read(new File(PATH, "highlight.png")));
+		imageMap.put("board", ImageIO.read(new File("img\\board.png")));
+		imageMap.put("highlight", ImageIO.read(new File("img\\highlight.png")));
 		//white pieces
-		imageMap.put("WPa", ImageIO.read(new File(PATH, "whitepawn.png")));
-		imageMap.put("WRo", ImageIO.read(new File(PATH, "whiterook.png")));
-		imageMap.put("WBi", ImageIO.read(new File(PATH, "whitebishop.png")));
-		imageMap.put("WKn", ImageIO.read(new File(PATH, "whiteknight.png")));
-		imageMap.put("WQu", ImageIO.read(new File(PATH, "whitequeen.png")));
-		imageMap.put("WKi", ImageIO.read(new File(PATH, "whiteking.png")));
+		imageMap.put("WPa", ImageIO.read(new File("img\\whitepawn.png")));
+		imageMap.put("WRo", ImageIO.read(new File("img\\whiterook.png")));
+		imageMap.put("WBi", ImageIO.read(new File("img\\whitebishop.png")));
+		imageMap.put("WKn", ImageIO.read(new File("img\\whiteknight.png")));
+		imageMap.put("WQu", ImageIO.read(new File("img\\whitequeen.png")));
+		imageMap.put("WKi", ImageIO.read(new File("img\\whiteking.png")));
 		//black pieces
-		imageMap.put("BPa", ImageIO.read(new File(PATH, "blackpawn.png")));
-		imageMap.put("BRo", ImageIO.read(new File(PATH, "blackrook.png")));
-		imageMap.put("BBi", ImageIO.read(new File(PATH, "blackbishop.png")));
-		imageMap.put("BKn", ImageIO.read(new File(PATH, "blackknight.png")));
-		imageMap.put("BQu", ImageIO.read(new File(PATH, "blackqueen.png")));
-		imageMap.put("BKi", ImageIO.read(new File(PATH, "blackking.png")));
+		imageMap.put("BPa", ImageIO.read(new File("img\\blackpawn.png")));
+		imageMap.put("BRo", ImageIO.read(new File("img\\blackrook.png")));
+		imageMap.put("BBi", ImageIO.read(new File("img\\blackbishop.png")));
+		imageMap.put("BKn", ImageIO.read(new File("img\\blackknight.png")));
+		imageMap.put("BQu", ImageIO.read(new File("img\\blackqueen.png")));
+		imageMap.put("BKi", ImageIO.read(new File("img\\blackking.png")));
 		
 		boardSize = imageMap.get("board").getWidth();
 		pieceSize = imageMap.get("WPa").getWidth();
