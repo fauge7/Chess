@@ -1,8 +1,10 @@
 package com.group8.chess.util;
 
-public class Packet {
+import java.io.Serializable;
 
-	private String message;
+public class Packet implements Serializable{
+
+	String message;
 	public Packet() {
 		// TODO Auto-generated constructor stub
 		message = "";

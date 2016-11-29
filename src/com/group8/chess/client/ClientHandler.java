@@ -20,6 +20,7 @@ public class ClientHandler implements Runnable {
 	}
 	@Override
 	public void run() {
+		
 		// TODO Auto-generated method stub
 		try {
 			os = new ObjectOutputStream(toServer.getOutputStream());
@@ -33,25 +34,19 @@ public class ClientHandler implements Runnable {
 			is = null;
 		}
 		Packet p;
-		try {
-			p = (Packet) is.readObject();
-			System.out.println(p.getMessage());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Object recieved;
+		while(true){
+			try {
+				while((recieved  = (Object) is.readObject()) != null){
+					p = (Packet) recieved;
+					System.out.println(p.getMessage());
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		
-//		while(true){
-//			if(ClientUI.CurrentPlayerTurn == ClientUI.thisPlayersColor){
-//				
-//			}
-//			else{
-//				
-//			}
-//		}
 	}
 
 }
