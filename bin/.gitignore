@@ -1,6 +1,3 @@
-/com/
-/img/
-/test/
 /blackbishop.png
 /blackking.png
 /blackknight.png
@@ -8,11 +5,13 @@
 /blackqueen.png
 /blackrook.png
 /board.png
+/com/
 /highlight.png
+/screenshot.png
+/test/
 /whitebishop.png
 /whiteking.png
 /whiteknight.png
 /whitepawn.png
 /whitequeen.png
 /whiterook.png
-/screenshot.png

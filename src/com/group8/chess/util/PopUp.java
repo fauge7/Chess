@@ -32,6 +32,9 @@ public class PopUp {
 		case CHECKMATE:
 			checkMate();
 			break;
+		case INVALID_MOVE:
+			invalidMove();
+			break;
 		default:
 			break;
 		}
@@ -138,5 +141,9 @@ public class PopUp {
     private void connectServer() {
     	noButton();
     	txt.setText("Connecting to server:\nWaiting for other player.");
+    }
+    private void invalidMove(){
+    	oneButton();
+    	txt.setText("Invalid move");
     }
 }

@@ -40,13 +40,14 @@ public class Server extends JFrame{
 				Packet connected  = new Packet("Players are connected");
 				toP1.writeObject(connected);
 				toP2.writeObject(connected);
-				Thread t = new Thread(new GameHandler(player1, player2));
+				Thread t = new Thread(new GameHandler(player1, player2,toP1,toP2));
+				t.start();
 			}
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		PopUp up = new PopUp(PopupType.WHITE_TURN);
+//		PopUp up = new PopUp(PopupType.WHITE_TURN);
 	}
 }

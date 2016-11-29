@@ -17,21 +17,23 @@ import javax.swing.JLabel;
 import com.group8.chess.piece.Piece;
 import com.group8.chess.util.Board;
 import com.group8.chess.util.Coordinate;
+import com.group8.chess.util.MovePacket;
 import com.group8.chess.util.PlayerColor;
 
 public class ClientUI {
-	private Board board;
-	private boolean highlight[][];
+	public static Board board;
+	private static boolean highlight[][];
 	public static PlayerColor CurrentPlayerTurn = PlayerColor.WHITE;
 	public static PlayerColor thisPlayersColor = PlayerColor.WHITE;
 	private Coordinate selectedCoor = null;
 	
-	private int boardSize, pieceSize;
-	private Map<String, BufferedImage> imageMap = new HashMap<>(); 
+	private static int boardSize;
+	private static int pieceSize;
+	private static Map<String, BufferedImage> imageMap = new HashMap<>(); 
 	private final File PATH = new File(System.getProperty("user.dir") + "\\img");
 
 	private JFrame frame;
-	private JLabel boardLbl;
+	private static JLabel boardLbl;
 	
 	public ClientUI(Board board) {
 		this.board = board;
@@ -86,7 +88,7 @@ public class ClientUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	public void updateDisplay() {
+	public static void updateDisplay() {
 		BufferedImage combined = new BufferedImage(boardSize, boardSize, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = combined.getGraphics();
 		g.drawImage(imageMap.get("board"), 0, 0, null);
@@ -116,14 +118,6 @@ public class ClientUI {
 	
 		boardLbl.setIcon(new ImageIcon(combined));
 		imageMap.put("display", combined);
-		
-		//Generates screenshot.png after each display update. 
-		try {
-			ImageIO.write(combined, "PNG", new File(PATH, "screenshot.png"));
-		} catch (IOException e) {
-			// Print error and ignore.
-			e.printStackTrace();
-		}
 	}
 
 	public void MouseUp(MouseEvent e) {
@@ -152,7 +146,14 @@ public class ClientUI {
 			if (piece != null && coor.equals(selectedCoor)) {
 				selectedCoor = null;
 			} else {
-				board.getPiece(selectedCoor).move(coor);
+				try {
+					ClientHandler.os.reset();
+					ClientHandler.os.writeObject(new MovePacket(selectedCoor, coor));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+//				board.getPiece(selectedCoor).move(coor);
 				selectedCoor = null;
 				updateDisplay();
 			}

@@ -21,6 +21,7 @@ public class Client {
 			toServer = new Socket("localhost", 8000);
 			while(!toServer.isConnected()){}
 			Thread t = new Thread(new ClientHandler(toServer));
+			t.start();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
