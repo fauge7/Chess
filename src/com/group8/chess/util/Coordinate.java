@@ -1,6 +1,8 @@
 package com.group8.chess.util;
 
-public class Coordinate {
+import java.io.Serializable;
+
+public class Coordinate implements Serializable{
 	private int x, y;
 
 	public Coordinate(int x, int y) {

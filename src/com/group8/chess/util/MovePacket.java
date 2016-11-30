@@ -6,7 +6,7 @@ public class MovePacket extends Packet{
 	public boolean isValid;
 	
 	public MovePacket(boolean isValid){
-		isValid =  isValid;
+		this.isValid =  isValid;
 	}
 	public MovePacket(Coordinate from, Coordinate to) {
 		// TODO Auto-generated constructor stub

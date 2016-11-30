@@ -41,8 +41,13 @@ public class PopUp {
     	frame.setVisible(true);
         //whiteTurn();
     }
+    public PopUp(String text){
+    	Notification(text);
+    	frame.setVisible(true);
+    }
     
-    //main method builds button
+    
+	//main method builds button
     public static void main(String[] args) {
         
     }
@@ -146,4 +151,9 @@ public class PopUp {
     	oneButton();
     	txt.setText("Invalid move");
     }
+    private void Notification(String text) {
+		// TODO Auto-generated method stub
+		oneButton();
+		txt.setText(text);
+	}
 }

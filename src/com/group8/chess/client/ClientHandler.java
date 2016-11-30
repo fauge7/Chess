@@ -8,6 +8,7 @@ import java.net.Socket;
 import com.group8.chess.piece.Piece;
 import com.group8.chess.util.MovePacket;
 import com.group8.chess.util.Packet;
+import com.group8.chess.util.PlayerColor;
 import com.group8.chess.util.PopUp;
 import com.group8.chess.util.PopupType;
 import com.group8.chess.util.TurnPacket;
@@ -40,6 +41,7 @@ public class ClientHandler implements Runnable {
 		while(true){
 			try {
 				while((recieved  = (Object) is.readObject()) != null){
+					Client.board.buildMoveList(ClientUI.CurrentPlayerTurn);
 					if(recieved instanceof TurnPacket){
 						TurnPacket tp = (TurnPacket) recieved;
 						System.out.println(tp.getMessage());
@@ -52,19 +54,25 @@ public class ClientHandler implements Runnable {
 							new PopUp(PopupType.INVALID_MOVE);
 						}
 						else{
-							Piece movedpiece = ClientUI.board.getPiece(mp.getFrom());
-							Piece toBeRemoved = ClientUI.board.getPiece(mp.getTo());
-							ClientUI.board.removePiece(toBeRemoved);
+							Piece movedpiece = Client.board.getPiece(mp.getFrom());
 							movedpiece.move(mp.getTo());
 							ClientUI.updateDisplay();
 						}
 					}
 					else if(recieved instanceof Packet){
-					p = (Packet) recieved;
-					System.out.println(p.getMessage());
-					}
-					else{
-						System.out.println("Invalid type of packet");
+						p = (Packet) recieved;
+						System.out.println(p.getMessage());
+							if(p.getMessage().equals("white")){
+								Client.color = PlayerColor.WHITE;
+//								new PopUp("Player is White");
+							}
+							else if(p.getMessage().equals("black")){
+								Client.color = PlayerColor.BLACK;
+//								new PopUp("Player is Black");
+							}
+							else{
+								System.out.println("Invalid type of packet");
+							}
 					}
 				}
 			} catch (ClassNotFoundException e) {
@@ -74,5 +82,4 @@ public class ClientHandler implements Runnable {
 			}
 		}
 	}
-
 }

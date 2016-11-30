@@ -21,7 +21,6 @@ import com.group8.chess.util.MovePacket;
 import com.group8.chess.util.PlayerColor;
 
 public class ClientUI {
-	public static Board board;
 	private static boolean highlight[][];
 	public static PlayerColor CurrentPlayerTurn = PlayerColor.WHITE;
 	public static PlayerColor thisPlayersColor = PlayerColor.WHITE;
@@ -36,7 +35,6 @@ public class ClientUI {
 	private static JLabel boardLbl;
 	
 	public ClientUI(Board board) {
-		this.board = board;
 		highlight = new boolean[board.width][board.height];
 		
 		try {
@@ -94,8 +92,8 @@ public class ClientUI {
 		g.drawImage(imageMap.get("board"), 0, 0, null);
 
 		// Draw Highlights
-		for (int x = 0; x < board.width; x++) {
-			for (int y = 0; y < board.height; y++) {
+		for (int x = 0; x < Client.board.width; x++) {
+			for (int y = 0; y < Client.board.height; y++) {
 				if (highlight[x][y]) {
 					g.drawImage(imageMap.get("highlight"), 
 							x * pieceSize,
@@ -107,7 +105,7 @@ public class ClientUI {
 		}
 		
 		// Draw Pieces
-		for (Piece piece: board.getPieces()) {
+		for (Piece piece: Client.board.getPieces()) {
 			System.out.println();
 			g.drawImage(imageMap.get(piece.getName()), 
 					piece.getPos().getX() * pieceSize,
@@ -122,20 +120,23 @@ public class ClientUI {
 
 	public void MouseUp(MouseEvent e) {
 		Coordinate coor = new Coordinate(e.getX() / pieceSize, 7 - (e.getY() / pieceSize));
-		if (!board.inBounds(coor)) return;
+		if (!Client.board.inBounds(coor)) return;
 		
-		Piece piece = board.getPiece(coor);
+		Piece piece = Client.board.getPiece(coor);
 		
+		if(piece != null && piece.getPlayerColor() != Client.color){
+			piece = null;
+		}
 		if (e.getButton() == 3) {
 			highlight[coor.getX()][coor.getY()] = !highlight[coor.getX()][coor.getY()]; 
 			updateDisplay();
 			return;
 		}
 		
-		if (selectedCoor == null) {
+		if (selectedCoor == null && piece != null) {
 			selectedCoor = piece.getPos();
 			if (piece != null) {
-				board.buildMoveList(piece.getPlayerColor());
+				Client.board.buildMoveList(piece.getPlayerColor());
 				clearHighlights();
 				for (Coordinate highCoor: piece.getMoveList()) {
 					highlight[highCoor.getX()][highCoor.getY()] = true;
@@ -147,8 +148,9 @@ public class ClientUI {
 				selectedCoor = null;
 			} else {
 				try {
-					ClientHandler.os.reset();
-					ClientHandler.os.writeObject(new MovePacket(selectedCoor, coor));
+					MovePacket mp = new MovePacket(selectedCoor, coor);
+					ClientHandler.os.writeObject(mp);
+					System.out.println(mp.getMessage());
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -163,7 +165,7 @@ public class ClientUI {
 	}
 	
 	private void clearHighlights() {
-		highlight = new boolean[board.width][board.height];
+		highlight = new boolean[Client.board.width][Client.board.height];
 	}
 	
 }
