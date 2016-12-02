@@ -13,7 +13,7 @@ public class MovePacket extends Packet{
 		super("Piece moved from " + from.toString() + " to " + to.toString());
 		this.from = from;
 		this.to = to;
-		isValid = true;
+		isValid = false;
 	}
 	
 	public MovePacket() {

@@ -8,8 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
 import com.group8.chess.util.Packet;
-import com.group8.chess.util.PopUp;
-import com.group8.chess.util.PopupType;
 
 public class Server extends JFrame{
 	// Use board.buildMoveList() once each time the player changes.

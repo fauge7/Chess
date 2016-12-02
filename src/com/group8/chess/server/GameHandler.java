@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.List;
 
 import com.group8.chess.util.Board;
+import com.group8.chess.util.CheckState;
 import com.group8.chess.util.Coordinate;
 import com.group8.chess.util.MovePacket;
 import com.group8.chess.util.Packet;
@@ -34,51 +34,80 @@ public class GameHandler implements Runnable {
 		// TODO Auto-generated method stub
 
 		try {
-			
 			fromPlayer1 = new ObjectInputStream(player1.getInputStream());
 			fromPlayer2 = new ObjectInputStream(player2.getInputStream());
 			MovePacket mp = null;
+			toPlayer1.writeObject(new Packet("white"));
+			toPlayer2.writeObject(new Packet("black"));
+		
 			while(true){
-				board.buildMoveList(currentPlayersTurn);
+				CheckState cs = board.buildMoveList(currentPlayersTurn);
 //				main logic loop for server, get the updates from the current player who's turn it is to go and go
 //				then switch listeners and keep going
 //				will end with the validation of a new move
 //				starts with a notification of a turn
-				toPlayer1.writeObject(new Packet("white"));
-				toPlayer2.writeObject(new Packet("black"));
+				if(cs == CheckState.CHECK){
+					if(currentPlayersTurn == PlayerColor.WHITE){
+						toPlayer1.writeObject(new Packet("check"));
+						Server.text.append("White is in check" + "\n");
+					}
+					else{
+						toPlayer2.writeObject(new Packet("check"));
+						Server.text.append("black is in check" + "\n");
+					}
+				}
+				else if(cs == CheckState.CHECK_MATE){
+						toPlayer1.writeObject(new Packet("checkmate"));
+						toPlayer2.writeObject(new Packet("checkmate"));
+					if(currentPlayersTurn == PlayerColor.WHITE){
+						Server.text.append("Black wins!\n");
+					}
+					else{
+						Server.text.append("White wins!\n");
+					}
+				}
 				toPlayer1.writeObject(new TurnPacket(currentPlayersTurn));
 				toPlayer2.writeObject(new TurnPacket(currentPlayersTurn));
-			if(currentPlayersTurn == PlayerColor.WHITE){
-				mp =  (MovePacket) fromPlayer1.readObject();
+				if(currentPlayersTurn == PlayerColor.WHITE){
+					mp =  (MovePacket) fromPlayer1.readObject();
+						if(isValidMove(mp)){
+							Server.text.append("white moved " + board.getPiece(mp.getFrom()) + " to" + mp.getTo().toString() + "\n");
+							mp.isValid = true;
+							board.getPiece(mp.getFrom()).move(mp.getTo());
+							toPlayer1.writeObject(mp);
+							toPlayer2.writeObject(mp);
+							currentPlayersTurn = currentPlayersTurn.getOpponent();
+							toPlayer1.writeObject(new TurnPacket(currentPlayersTurn));
+							toPlayer2.writeObject(new TurnPacket(currentPlayersTurn));
+						}
+						else{
+							Server.text.append("white made an Invalid move\n");
+							mp.isValid = false;
+							toPlayer1.writeObject(mp);
+							
+						}
+					
+				}//end of white turn
+				else{
+				//start of black turn
+					mp =  (MovePacket) fromPlayer2.readObject();
 					if(isValidMove(mp)){
-						Server.text.append("Valid move\n");
+						Server.text.append("black moved " + board.getPiece(mp.getFrom()) + " to" + mp.getTo().toString() + "\n");
 						mp.isValid = true;
+						board.getPiece(mp.getFrom()).move(mp.getTo());
 						toPlayer1.writeObject(mp);
 						toPlayer2.writeObject(mp);
 						currentPlayersTurn = currentPlayersTurn.getOpponent();
 						toPlayer1.writeObject(new TurnPacket(currentPlayersTurn));
 						toPlayer2.writeObject(new TurnPacket(currentPlayersTurn));
 					}
-				
-			}//end of white turn
-			else{
-			//start of black turn
-				mp =  (MovePacket) fromPlayer2.readObject();
-				if(isValidMove(mp)){
-					Server.text.append("Valid move\n");
-					mp.isValid = true;
-					toPlayer1.writeObject(mp);
-					toPlayer2.writeObject(mp);
-					currentPlayersTurn = currentPlayersTurn.getOpponent();
-					toPlayer1.writeObject(new TurnPacket(currentPlayersTurn));
-					toPlayer2.writeObject(new TurnPacket(currentPlayersTurn));
+					else{
+						Server.text.append("black made an Invalid move\n");
+						mp.isValid = false;
+						toPlayer2.writeObject(mp);
+						
+					}
 				}
-			
-			}
-				
-				
-				
-				
 			}//end of turns
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -91,14 +120,15 @@ public class GameHandler implements Runnable {
 		return (movePacket != null) ? isValidMove(movePacket.getFrom(), movePacket.getTo()) : false;
 	}
 	public boolean isValidMove(Coordinate from, Coordinate to){
-		Server.text.append("" + board.getPiece(from).getMoveList().contains(to));	
-		List<Coordinate> templist = board.getPiece(from).getMoveList();
-		for(Coordinate c : templist){
-			if(c.getX() == to.getX() && c.getY() == to.getY()){
+		Server.text.append("is the piece contained in list " + board.getPiece(from).getMoveList().contains(to) + "\n");	
+		for(Coordinate c : board.getPiece(from).getMoveList()){
+			if(c.equals(to)){
 				return true;
 			}
 		}
-		return board.getPiece(from).getMoveList().contains(to);
+		if(board.getPiece(to).getPlayerColor() != board.getPiece(to).getPlayerColor())
+			return true;
+		return false;
 	}
 	public void sendPacket(ObjectOutputStream toPlayer, Packet sending) throws IOException{
 		toPlayer.writeObject(sending);

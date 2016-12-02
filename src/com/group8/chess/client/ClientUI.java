@@ -119,49 +119,45 @@ public class ClientUI {
 	}
 
 	public void MouseUp(MouseEvent e) {
-		Coordinate coor = new Coordinate(e.getX() / pieceSize, 7 - (e.getY() / pieceSize));
-		if (!Client.board.inBounds(coor)) return;
-		
-		Piece piece = Client.board.getPiece(coor);
-		
-		if(piece != null && piece.getPlayerColor() != Client.color){
-			piece = null;
-		}
-		if (e.getButton() == 3) {
-			highlight[coor.getX()][coor.getY()] = !highlight[coor.getX()][coor.getY()]; 
-			updateDisplay();
-			return;
-		}
-		
-		if (selectedCoor == null && piece != null) {
-			selectedCoor = piece.getPos();
-			if (piece != null) {
-				Client.board.buildMoveList(piece.getPlayerColor());
-				clearHighlights();
-				for (Coordinate highCoor: piece.getMoveList()) {
-					highlight[highCoor.getX()][highCoor.getY()] = true;
-				}
-
-			}
-		} else {
-			if (piece != null && coor.equals(selectedCoor)) {
-				selectedCoor = null;
-			} else {
-				try {
-					MovePacket mp = new MovePacket(selectedCoor, coor);
-					ClientHandler.os.writeObject(mp);
-					System.out.println(mp.getMessage());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-//				board.getPiece(selectedCoor).move(coor);
-				selectedCoor = null;
+		if(Client.color == ClientUI.CurrentPlayerTurn){
+			Coordinate coor = new Coordinate(e.getX() / pieceSize, 7 - (e.getY() / pieceSize));
+			if (!Client.board.inBounds(coor)) return;
+			
+			Piece piece = Client.board.getPiece(coor);
+			
+			if (e.getButton() == 3) {
+				highlight[coor.getX()][coor.getY()] = !highlight[coor.getX()][coor.getY()]; 
 				updateDisplay();
+				return;
 			}
-			clearHighlights();
+			
+			if (selectedCoor == null && piece != null) {
+				selectedCoor = piece.getPos();
+				Client.board.buildMoveList(piece.getPlayerColor());
+					clearHighlights();
+					for (Coordinate highCoor: piece.getMoveList()) {
+						highlight[highCoor.getX()][highCoor.getY()] = true;
+					}
+			} else {
+				if (piece != null && coor.equals(selectedCoor)) {
+//					selectedCoor = null;
+				} else {
+					try {
+						MovePacket mp = new MovePacket(selectedCoor, coor);
+						ClientHandler.os.writeObject(mp);
+						System.out.println(mp.getMessage());
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	//				board.getPiece(selectedCoor).move(coor);
+					selectedCoor = null;
+					updateDisplay();
+				}
+				clearHighlights();
+			}
+			updateDisplay();
 		}
-		updateDisplay();
 	}
 	
 	private void clearHighlights() {

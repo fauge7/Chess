@@ -41,22 +41,23 @@ public class ClientHandler implements Runnable {
 		while(true){
 			try {
 				while((recieved  = (Object) is.readObject()) != null){
-					Client.board.buildMoveList(ClientUI.CurrentPlayerTurn);
+					Client.board.buildMoveList(ClientUI.thisPlayersColor);
+					
 					if(recieved instanceof TurnPacket){
 						TurnPacket tp = (TurnPacket) recieved;
 						System.out.println(tp.getMessage());
-						
+						ClientUI.CurrentPlayerTurn = tp.getCurrentPlayersTurn();
 					}
 					else if(recieved instanceof MovePacket){
 						MovePacket mp = (MovePacket) recieved;
-						System.out.println(mp.getMessage());
-						if(!mp.isValid){
-							new PopUp(PopupType.INVALID_MOVE);
-						}
-						else{
+						System.out.println("IsValid: " + mp.isValid + mp.getMessage());
+						if(mp.isValid){
 							Piece movedpiece = Client.board.getPiece(mp.getFrom());
 							movedpiece.move(mp.getTo());
 							ClientUI.updateDisplay();
+						}
+						else{
+							new PopUp(PopupType.INVALID_MOVE);
 						}
 					}
 					else if(recieved instanceof Packet){
@@ -64,11 +65,17 @@ public class ClientHandler implements Runnable {
 						System.out.println(p.getMessage());
 							if(p.getMessage().equals("white")){
 								Client.color = PlayerColor.WHITE;
-//								new PopUp("Player is White");
+								new PopUp("Player is White");
 							}
 							else if(p.getMessage().equals("black")){
 								Client.color = PlayerColor.BLACK;
-//								new PopUp("Player is Black");
+								new PopUp("Player is Black");
+							}
+							else if(p.getMessage().equals("check")){
+								new PopUp(PopupType.CHECK);
+							}
+							else if(p.getMessage().equals("checkmate")){
+								new PopUp(PopupType.CHECKMATE);
 							}
 							else{
 								System.out.println("Invalid type of packet");

@@ -108,7 +108,7 @@ public class Board {
 	/**
 	 * Builds a moveList for all pieces.
 	 * @param color Current Player
-	 * @return CHeckState
+	 * @return CheckState
 	 */
 	public CheckState buildMoveList(PlayerColor color) {
 		if (!canCheckMate(PlayerColor.WHITE) && !canCheckMate(PlayerColor.BLACK)) {
